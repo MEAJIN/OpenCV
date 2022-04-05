@@ -61,8 +61,6 @@ namespace OpenCV
                 RetrievalModes.Tree, ContourApproximationModes.ApproxSimple);
 
 
-
-
             for (int i = 0; i < contour2.Length; i++)
             {
                 Cv2.DrawContours(src2, contour2, i, Scalar.Yellow, 3, LineTypes.AntiAlias);
