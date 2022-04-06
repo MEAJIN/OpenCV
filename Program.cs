@@ -77,14 +77,14 @@ namespace OpenCV
             {
                 Cv2.DrawContours(src2, contour2, i, Scalar.Yellow, 3, LineTypes.AntiAlias);
                 //Console.WriteLine(Cv2.BoundingRect(contour2[i]).X + " " + Cv2.BoundingRect(contour2[i]).Y + " " + Cv2.BoundingRect(contour2[i]).Height + " " + Cv2.BoundingRect(contour2[i]).Width);
-                
-                // 십자가 도형 중심점
+
+                // 십자가 박스 중심점
                 Moments mmt = Cv2.Moments(contour2[i]);
                 double cx = mmt.M10 / mmt.M00,
                        cy = mmt.M01 / mmt.M00;
                 Cv2.Circle(src2, new Point(cx, cy), 3, Scalar.Red, -1, LineTypes.AntiAlias);
 
-                crossBoxPoint[i] = new Point(cx,cy);
+                crossBoxPoint[i] = new Point(cx, cy);
 
                 // 십자가 중심점
                 if (i >= 1 && i <= 4)
@@ -94,18 +94,32 @@ namespace OpenCV
                 }
             }
             Cv2.Circle(src2, new Point(crossX / 4, crossY / 4), 3, Scalar.YellowGreen, -1, LineTypes.AntiAlias);
-
+            Console.WriteLine("crossX : {0}, crossY : {1}", crossX, crossY);
             // 십자가 x,y축 그리기
             Point[] crossLinePoint = new Point[4];
+
+            // 각 지점의 crossLinePoint 좌표 값 (6시를 기준으로 반시계 방향이 배열 순서)
             crossLinePoint[0] = crossBoxPoint[1] + crossBoxPoint[2];
             crossLinePoint[0] = new Point(crossLinePoint[0].X / 2, crossLinePoint[0].Y / 2);
-            crossLinePoint[1] = crossBoxPoint[3] + crossBoxPoint[4];
+            Console.WriteLine("crossLinePoint[0] : {0}", crossLinePoint[0]);
 
+            crossLinePoint[1] = crossBoxPoint[1] + crossBoxPoint[3];
+            crossLinePoint[1] = new Point(crossLinePoint[1].X / 2, crossLinePoint[1].Y / 2);
+            Console.WriteLine("crossLinePoint[1] : {0}", crossLinePoint[1]);
 
+            crossLinePoint[2] = crossBoxPoint[3] + crossBoxPoint[4];
+            crossLinePoint[2] = new Point(crossLinePoint[2].X / 2, crossLinePoint[2].Y / 2);
+            Console.WriteLine("crossLinePoint[2] : {0}", crossLinePoint[2]);
 
+            crossLinePoint[3] = crossBoxPoint[2] + crossBoxPoint[4];
+            crossLinePoint[3] = new Point(crossLinePoint[3].X / 2, crossLinePoint[3].Y / 2);
+            Console.WriteLine("crossLinePoint[3] : {0}", crossLinePoint[3]);
 
-
-            Console.WriteLine("{0}, {1}, {2}", crossLinePoint[0], crossBoxPoint[1], crossBoxPoint[2]);
+            // crossLinePoint의 좌표값을 가지고 라인 draw
+            Mat draw = ImageDraw();
+            Cv2.Line(draw, new Point(662, 260), new Point(925, 260), Scalar.Orange, 10, LineTypes.AntiAlias);
+            Cv2.Line(draw, new Point(793, 129), new Point(793, 392), Scalar.Orange, 10, LineTypes.AntiAlias);
+            Cv2.ImShow("Drawing", draw);
 
 
             // 
