@@ -6,11 +6,14 @@ namespace OpenCV
 {
     internal static class Program
     {
-        /// <summary>
-        /// 해당 애플리케이션의 주 진입점입니다.
-        /// </summary>
+        static void Main()
+        {
+
+            /*도형그리기();*/
+            contour();
+        }
         [STAThread]
-        static void 기초1()
+        static void 도형그리기()
         {
             Mat draw = new Mat(new Size(1000, 1000), MatType.CV_8UC3, Scalar.Black);
 
@@ -33,13 +36,30 @@ namespace OpenCV
             }
         }
 
+        static Mat ImageDraw()
+        {
+            return new Mat("./Resources/all_mask_key.png");
+        }
         static void contour()
         {
-            Mat src = new Mat("./Resources/all_mask_key.png");
+            // 오버로드 방법.1
+            /*
+            Mat hierarchy1 = new Mat();
+            Cv2.FindContours(bin, out Mat[] contour1, hierarchy1,
+                RetrievalModes.Tree, ContourApproximationModes.ApproxSimple);
+
+                for (int i = 0; i < contour1.Length; i++) 
+                {
+                    Cv2.DrawContours(src1, contour1, i, Scalar.Red, 3, LineTypes.AntiAlias);
+                }
+                Cv2.ImShow("1", src1);
+            */
+
+            Mat src = ImageDraw();
             Mat src1 = new Mat(), src2 = new Mat();
             src.CopyTo(src1);
             src.CopyTo(src2);
-            Cv2.ImShow("src", src);
+            //Cv2.ImShow("src", src);
 
             Mat bin = new Mat();
             Cv2.CvtColor(src, bin, ColorConversionCodes.BGR2GRAY);
@@ -47,40 +67,57 @@ namespace OpenCV
             //이진화란 영상을 흑/백으로 분류하여 처리하는 것을 말합니다. 
             Cv2.Threshold(bin, bin, 200, 255, ThresholdTypes.Binary);
 
-            Mat hierarchy1 = new Mat();
-            Cv2.FindContours(bin, out Mat[] contour1, hierarchy1,
-                RetrievalModes.Tree, ContourApproximationModes.ApproxSimple);
-
-        /*    for (int i = 0; i < contour1.Length; i++) 
-            {
-                Cv2.DrawContours(src1, contour1, i, Scalar.Red, 3, LineTypes.AntiAlias);
-            }
-            Cv2.ImShow("1", src1);
-*/
+            // 오버로드 방법.2
             Cv2.FindContours(bin, out Point[][] contour2, out HierarchyIndex[] hierarchy2,
                 RetrievalModes.Tree, ContourApproximationModes.ApproxSimple);
 
-
+            double crossX = 0.0, crossY = 0.0;
+            Point[] crossBoxPoint = new Point[contour2.Length];
             for (int i = 0; i < contour2.Length; i++)
             {
                 Cv2.DrawContours(src2, contour2, i, Scalar.Yellow, 3, LineTypes.AntiAlias);
-                Console.WriteLine(Cv2.BoundingRect(contour1[i]));
+                //Console.WriteLine(Cv2.BoundingRect(contour2[i]).X + " " + Cv2.BoundingRect(contour2[i]).Y + " " + Cv2.BoundingRect(contour2[i]).Height + " " + Cv2.BoundingRect(contour2[i]).Width);
+                
+                // 십자가 도형 중심점
+                Moments mmt = Cv2.Moments(contour2[i]);
+                double cx = mmt.M10 / mmt.M00,
+                       cy = mmt.M01 / mmt.M00;
+                Cv2.Circle(src2, new Point(cx, cy), 3, Scalar.Red, -1, LineTypes.AntiAlias);
 
+                crossBoxPoint[i] = new Point(cx,cy);
+
+                // 십자가 중심점
+                if (i >= 1 && i <= 4)
+                {
+                    crossX += cx;
+                    crossY += cy;
+                }
             }
-            Cv2.ImShow("2", src2);
+            Cv2.Circle(src2, new Point(crossX / 4, crossY / 4), 3, Scalar.YellowGreen, -1, LineTypes.AntiAlias);
 
+            // 십자가 x,y축 그리기
+            Point[] crossLinePoint = new Point[4];
+            crossLinePoint[0] = crossBoxPoint[1] + crossBoxPoint[2];
+            crossLinePoint[0] = new Point(crossLinePoint[0].X / 2, crossLinePoint[0].Y / 2);
+            crossLinePoint[1] = crossBoxPoint[3] + crossBoxPoint[4];
+
+
+
+
+
+            Console.WriteLine("{0}, {1}, {2}", crossLinePoint[0], crossBoxPoint[1], crossBoxPoint[2]);
+
+
+            // 
+            Cv2.ImShow("2", src2);
             Cv2.WaitKey(0);
             Cv2.DestroyAllWindows();
-
         }
-        static void Main()
+
+        static void Moments()
         {
 
-            /*기초1();*/
-            contour();
-
-
-
         }
+
     }
 }
