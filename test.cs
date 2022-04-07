@@ -6,7 +6,7 @@ namespace OpenCV
 {
     internal static class test
     {
-        static Mat Contour(Point[][] contour, Mat src)
+        static Mat Contour(Point[][] contour,Mat src)
         {
             for (int i = 0; i < contour.Length; i++)
             {
@@ -35,7 +35,7 @@ namespace OpenCV
                     crossX += cx;
                     crossY += cy;
                 }
-
+                
             }
             Cv2.Circle(src, new Point(crossX / 4, crossY / 4), 3, Scalar.YellowGreen, -1, LineTypes.AntiAlias);
             Console.WriteLine("crossX : {0}, crossY : {1}", crossX, crossY);
@@ -82,12 +82,12 @@ namespace OpenCV
             crossLinePoint[3] = crossBoxPoint[2] + crossBoxPoint[4];
             crossLinePoint[3] = new Point(crossLinePoint[3].X / 2, crossLinePoint[3].Y / 2);
             Console.WriteLine("crossLinePoint[3] : {0}", crossLinePoint[3]);
-
+             
             Cv2.Line(src, crossLinePoint[1], crossLinePoint[3], Scalar.Orange, 10, LineTypes.AntiAlias);
             Cv2.Line(src, crossLinePoint[0], crossLinePoint[2], Scalar.Orange, 10, LineTypes.AntiAlias);
 
-            Cv2.Line(src, new Point(rect.X + rect.Width / 2, rect.Y), new Point(rect.X + rect.Width / 2, rect.Y + rect.Height), Scalar.Orange, 10, LineTypes.AntiAlias);
-            Cv2.Line(src, new Point(rect.X, rect.Y + rect.Height / 2), new Point(rect.X + rect.Width, rect.Y + rect.Height / 2), Scalar.Orange, 10, LineTypes.AntiAlias);
+            Cv2.Line(src, new Point(rect.X + rect.Width/2, rect.Y), new Point(rect.X + rect.Width / 2, rect.Y + rect.Height), Scalar.Orange, 10, LineTypes.AntiAlias);
+            Cv2.Line(src, new Point(rect.X, rect.Y+ rect.Height/2), new Point(rect.X + rect.Width, rect.Y + rect.Height / 2), Scalar.Orange, 10, LineTypes.AntiAlias);
             return src;
         }
         static void Main()
@@ -100,19 +100,14 @@ namespace OpenCV
             Cv2.FindContours(bin, out Point[][] contour, out HierarchyIndex[] hierarchy,
              RetrievalModes.Tree, ContourApproximationModes.ApproxSimple);
 
-            //  double crossX = 0.0, crossY = 0.0;
-            //Point[] crossBoxPoint = new Point[contour.Length];
-
             src = Contour(contour, src);
             src = DrawLine(contour, src);
             src = DrawCenterPoint(contour, src);
 
-            Cv2.ImShow("Paint", src);
-
+            Cv2.ImShow("Paint",src );
+         
             Cv2.WaitKey(0);
             Cv2.DestroyAllWindows();
-
-
         }
 
     }
