@@ -104,12 +104,7 @@ namespace OpenCV
             Random random = new Random();
             return random.Next(0, x);
         }
-        static void Spin(Mat board, Point randomValueXY, int randomValueAngle)
-        {
-            // 표식 회전
-            Mat matrix = Cv2.GetRotationMatrix2D(new Point2f(randomValueXY.X+50, randomValueXY.Y + 50), randomValueAngle, 1.0);
-            Cv2.WarpAffine(board, board, matrix, new Size(board.Width, board.Height));
-        }
+       
         static Point[] AllCall(Mat board, int type,int randomValueAngle, Point randomValueXY)
         {
             // 도형 좌표값 랜덤 생성
@@ -120,7 +115,7 @@ namespace OpenCV
                 MakeCross(board, randomValueXY.X, randomValueXY.Y);
             else if (type == 1)
                 MakeFourBox(board, randomValueXY.X, randomValueXY.Y);
-            Spin(board, randomValueXY, randomValueAngle);
+            Spin(board, board, randomValueXY, randomValueAngle);
             Point[][] contour = Contour(board);
             return DrawLine(contour, board);
         }
@@ -129,7 +124,14 @@ namespace OpenCV
             double x = (int)a.X - (int)b.X;
             double y = (int)b.Y - (int)a.Y;
             double radian = Math.Atan2(y, x);
-            return radian * 180.0 / Math.PI;
+
+            return radian * 57.295779513082320876798154814105;
+        }
+        static void Spin(Mat board,Mat dst ,Point randomValueXY, int randomValueAngle)
+        {
+            // 표식 회전
+            Mat matrix = Cv2.GetRotationMatrix2D(new Point2f(randomValueXY.X + 50, randomValueXY.Y + 50), randomValueAngle, 1.0);
+            Cv2.WarpAffine(board, dst, matrix, new Size(board.Width, board.Height));
         }
         static void Main()
         {   // 도형을 그릴 보드 생성
@@ -138,12 +140,15 @@ namespace OpenCV
 
             // 도형 각도 랜덤 생성
             Point randomValueXY_C = RandomValueXY(100, 700);
-            int randomValueAngle_C = RandomValueAngle(359);
+            
+            int randomValueAngle_C = RandomValueAngle(360);
             Point[] crossSpot = AllCall(crossBoard, 0, randomValueAngle_C, randomValueXY_C);
-
+            Mat crossBoardTemp = new Mat(crossBoard.Size(), MatType.CV_8UC3);
+            crossBoard.CopyTo(crossBoardTemp);
+          
             Point randomValueXY_F = RandomValueXY(100, 700);
             int randomValueAngle_F = RandomValueAngle(359);
-            Point[] FourBoxSpot = AllCall(fourBoxBoard, 1, randomValueAngle_F, randomValueXY_F);
+            Point[] FourBoxSpot = AllCall(fourBoxBoard, 1, randomValueAngle_F, randomValueXY_C);
 
             //두 표식의 거리 계산
             Point test = crossSpot[0] + crossSpot[2];
@@ -160,7 +165,7 @@ namespace OpenCV
             //두 표식 각도 계산
 
             double pointDegree = Theta(test, ftest);
-            int axisDegree = (int)(Theta(crossSpot[0], crossSpot[2]) - Theta(FourBoxSpot[0], FourBoxSpot[2]));
+            double axisDegree = (double)(Theta(crossSpot[0], crossSpot[2]) - Theta(FourBoxSpot[0], FourBoxSpot[2]));
             int direct = (90 - (axisDegree + 360) % 90) > (axisDegree + 360) % 90 ? -1 : 1;
             axisDegree = (90 - (axisDegree + 360) % 90) > (axisDegree + 360) % 90 ? (axisDegree + 360) % 90 : 90 - (axisDegree + 360) % 90;
     
@@ -175,10 +180,10 @@ namespace OpenCV
             if (Cv2.WaitKey(2000) == 'q') 
             { int a = 0; }
 
-            for (int i = 0; i < (int)axisDegree-1; i++)
+            for (int i = 0; i <= (int)(axisDegree+0.5); i++)
             {
-                Spin(crossBoard,randomValueXY_C, direct);
-                Cv2.Add(fourBoxBoard, crossBoard, add);
+                Spin(crossBoard, crossBoardTemp, randomValueXY_C, direct * i);
+                Cv2.Add(fourBoxBoard, crossBoardTemp, add);
                 Cv2.ImShow("FPaint", add);
                 if (Cv2.WaitKey(50) == 'q') break;
             }
