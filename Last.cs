@@ -1,4 +1,5 @@
-﻿using System;
+
+using System;
 using System.Windows.Forms;
 using OpenCvSharp;
 
@@ -6,6 +7,7 @@ namespace OpenCV
 {
     internal static class test
     {
+        const double PIDIVISION3 = 57.295779513082320876798154814105;
         //5
         // 랜덤 좌표 생성 함수
         static Point RandomValueXY(int x, int y)
@@ -162,15 +164,15 @@ namespace OpenCV
 
             // 라디안을 이용한 각도 값 반환'
             // 실수는 180/Pi 이다
-            return radian * 57.295779513082320876798154814105;
+            return radian * PIDIVISION3;
         }
 
         //15
-        static Mat move(Mat board, int x, int y, Point offset)
+        static Mat move(Mat board, int x, int y)
         {   // 주어진 좌표에서 offset 만큼 이동 하여 cross 이미지 생성
             Mat temp = new Mat(board.Size(), MatType.CV_8UC3);
-            Cv2.Rectangle(temp, new Point(x + 40, y) + offset, new Point(x + 60, y + 100) + offset, Scalar.Red, -1);
-            Cv2.Rectangle(temp, new Point(x, y + 40) + offset, new Point(x + 100, y + 60) + offset, Scalar.Red, -1);
+            Cv2.Rectangle(temp, new Point(x + 40, y) , new Point(x + 60, y + 100) , Scalar.Red, -1);
+            Cv2.Rectangle(temp, new Point(x, y + 40)  , new Point(x + 100, y + 60) , Scalar.Red, -1);
             return temp;
         }
         static void Main()
@@ -234,11 +236,11 @@ namespace OpenCV
             Cv2.ImShow("FPaint", add);
 
             // 프로그램 실행 시 도형 확인을 위한 wait 함수
-            if (Cv2.WaitKey(20) == 'q')
-            {
-                int a = 0;
-            }
-
+            /*    if (Cv2.WaitKey(2000) == 'q')
+                {
+                    int a = 0;
+                }*/
+            Cv2.WaitKey(0);
 
             // axisDegree값 만큼 반복하며 1도씩 이미지 회전
             for (int i = 0; i <= (int)(axisDegree + 0.5); i++)
@@ -251,15 +253,15 @@ namespace OpenCV
                 if (Cv2.WaitKey(5) == 'q') break;
             }
 
-           //14
+            //14
             Mat temp = new Mat();
-            double radian = 57.295779513082320876798154814105;
+
             crossBoardTemp = new Mat(crossBoard.Size(), MatType.CV_8UC3);
             for (int i = 0; i <= (int)(Distance + 0.5); i++)
             {
-                int newX = randomValueXY_C.X + -(int)(Math.Cos(pointDegree / radian) * i),
-                    newY = randomValueXY_C.Y + (int)(Math.Sin(pointDegree / radian) * i);
-                temp = move(crossBoard, randomValueXY_C.X, randomValueXY_C.Y, new Point(-(int)(Math.Cos(pointDegree / radian) * i), (int)(Math.Sin(pointDegree / radian) * i)));
+                int newX = randomValueXY_C.X + -(int)(Math.Cos(pointDegree / PIDIVISION3) * i),
+                    newY = randomValueXY_C.Y + (int)(Math.Sin(pointDegree / PIDIVISION3) * i);
+                temp = move(crossBoard, newX, newY);
                 Spin(temp, crossBoardTemp, new Point(newX, newY), randomValueAngle_C + (int)axisDegree * direct);
       
                 DrawLine(Contour(crossBoardTemp), crossBoardTemp, 0);
@@ -267,14 +269,10 @@ namespace OpenCV
                 Cv2.Add(crossBoardTemp, fourBoxBoard, add);
                 Cv2.ImShow("FPaint", add);
                 if (Cv2.WaitKey(1) == 'q') break;
-            }
-
-
-
+            }         
 
             Cv2.WaitKey(0);
             Cv2.DestroyAllWindows();
         }
     }
 }
-
