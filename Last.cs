@@ -251,40 +251,26 @@ namespace OpenCV
                 if (Cv2.WaitKey(5) == 'q') break;
             }
 
-            //14
+           //14
             Mat temp = new Mat();
+            double radian = 57.295779513082320876798154814105;
+            crossBoardTemp = new Mat(crossBoard.Size(), MatType.CV_8UC3);
             for (int i = 0; i <= (int)(Distance + 0.5); i++)
             {
+                int newX = randomValueXY_C.X + -(int)(Math.Cos(pointDegree / radian) * i),
+                    newY = randomValueXY_C.Y + (int)(Math.Sin(pointDegree / radian) * i);
+                temp = move(crossBoard, randomValueXY_C.X, randomValueXY_C.Y, new Point(-(int)(Math.Cos(pointDegree / radian) * i), (int)(Math.Sin(pointDegree / radian) * i)));
+                Spin(temp, crossBoardTemp, new Point(newX, newY), randomValueAngle_C + (int)axisDegree * direct);
+      
+                DrawLine(Contour(crossBoardTemp), crossBoardTemp, 0);
 
-                temp = move(crossBoard, randomValueXY_C.X, randomValueXY_C.Y, new Point(-(int)(Math.Cos(pointDegree / 57.295779513082320876798154814105) * i), (int)(Math.Sin(pointDegree / 57.295779513082320876798154814105) * i)));
-
-                //move(board, dst, ofur, crossBoardTemp, 0);
-                // AllCall(crossBoardTemp, 0, 0, randomValueXY_C+new Point(Math.Cos(pointDegree / 57.295779513082320876798154814105)*i, Math.Sin(pointDegree / 57.295779513082320876798154814105) * i));
-                Cv2.Add(temp, fourBoxBoard, add);
+                Cv2.Add(crossBoardTemp, fourBoxBoard, add);
                 Cv2.ImShow("FPaint", add);
                 if (Cv2.WaitKey(1) == 'q') break;
             }
-            // 지점에 도착 후 fourBox축에 맞춰 cross회전
-            Spin(temp, temp, randomValueXY_F, randomValueAngle_C + (int)axisDegree * direct);
 
 
-            //16
-            // 도형이 도착지점에 오면 컨투어 생성
-            Mat bin = new Mat();
 
-            //cross  contour, drawline
-            Cv2.CvtColor(temp, bin, ColorConversionCodes.BGR2GRAY);
-            Cv2.Threshold(bin, bin, 70, 255, ThresholdTypes.Binary);
-            Cv2.FindContours(bin, out Point[][] contour, out HierarchyIndex[] hierarchy,
-            RetrievalModes.Tree, ContourApproximationModes.ApproxSimple);
-
-            for (int i = 0; i < contour.Length; i++)
-            {
-                Cv2.DrawContours(temp, contour, i, Scalar.Blue, 2);
-            }
-
-            Cv2.Add(temp, fourBoxBoard, add);
-            Cv2.ImShow("FPaint", add);
 
             Cv2.WaitKey(0);
             Cv2.DestroyAllWindows();
