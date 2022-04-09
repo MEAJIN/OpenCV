@@ -109,42 +109,42 @@ namespace OpenCV
             else // 아니라면, fourBox로 판명후, 축 생성
             {
                 double crossX = 0.0, crossY = 0.0;
-                Point[] crossBoxPoint = new Point[contour.Length];
+                Point[] fourBoxPoint = new Point[contour.Length];
 
                 for (int i = 0; i < contour.Length; i++)
                 {
                     Moments mmt = Cv2.Moments(contour[i]);
                     double cx = mmt.M10 / mmt.M00,
                            cy = mmt.M01 / mmt.M00;
-                    crossBoxPoint[i] = new Point(cx, cy);
-                    Console.WriteLine("crossLinePoint[{0}]", crossBoxPoint[i]);
+                    fourBoxPoint[i] = new Point(cx, cy);
+                    Console.WriteLine("crossLinePoint[{0}]", fourBoxPoint[i]);
 
                     crossX += cx;
                     crossY += cy;
                 }
 
-                Point[] crossLinePoint = new Point[4];
+                Point[] fourBoxLinePoint = new Point[4];
 
-                crossLinePoint[0] = crossBoxPoint[0] + crossBoxPoint[1];
-                crossLinePoint[0] = new Point(crossLinePoint[0].X / 2, crossLinePoint[0].Y / 2);
-                //Console.WriteLine("crossLinePoint[0] : {0}", crossLinePoint[0]);
+                fourBoxLinePoint[0] = fourBoxPoint[0] + fourBoxPoint[1];
+                fourBoxLinePoint[0] = new Point(fourBoxLinePoint[0].X / 2, fourBoxLinePoint[0].Y / 2);
+                //Console.WriteLine("fourBoxLinePoint[0] : {0}", fourBoxLinePoint[0]);
 
-                crossLinePoint[1] = crossBoxPoint[1] + crossBoxPoint[3];
-                crossLinePoint[1] = new Point(crossLinePoint[1].X / 2, crossLinePoint[1].Y / 2);
-                //Console.WriteLine("crossLinePoint[1] : {0}", crossLinePoint[1]);
+                fourBoxLinePoint[1] = fourBoxPoint[1] + fourBoxPoint[3];
+                fourBoxLinePoint[1] = new Point(fourBoxLinePoint[1].X / 2, fourBoxLinePoint[1].Y / 2);
+                //Console.WriteLine("fourBoxLinePoint[1] : {0}", fourBoxLinePoint[1]);
 
-                crossLinePoint[2] = crossBoxPoint[2] + crossBoxPoint[3];
-                crossLinePoint[2] = new Point(crossLinePoint[2].X / 2, crossLinePoint[2].Y / 2);
-                //Console.WriteLine("crossLinePoint[2] : {0}", crossLinePoint[2]);
+                fourBoxLinePoint[2] = fourBoxPoint[2] + fourBoxPoint[3];
+                fourBoxLinePoint[2] = new Point(fourBoxLinePoint[2].X / 2, fourBoxLinePoint[2].Y / 2);
+                //Console.WriteLine("fourBoxLinePoint[2] : {0}", fourBoxLinePoint[2]);
 
-                crossLinePoint[3] = crossBoxPoint[2] + crossBoxPoint[0];
-                crossLinePoint[3] = new Point(crossLinePoint[3].X / 2, crossLinePoint[3].Y / 2);
-                //Console.WriteLine("crossLinePoint[3] : {0}", crossLinePoint[3]);
+                fourBoxLinePoint[3] = fourBoxPoint[2] + fourBoxPoint[0];
+                fourBoxLinePoint[3] = new Point(fourBoxLinePoint[3].X / 2, fourBoxLinePoint[3].Y / 2);
+                //Console.WriteLine("fourBoxLinePoint[3] : {0}", fourBoxLinePoint[3]);
 
-                Cv2.Line(src, crossLinePoint[1], crossLinePoint[3], Scalar.Red, 5);
-                Cv2.Line(src, crossLinePoint[0], crossLinePoint[2], Scalar.Red, 5);
+                Cv2.Line(src, fourBoxLinePoint[1], fourBoxLinePoint[3], Scalar.Red, 10);
+                Cv2.Line(src, fourBoxLinePoint[0], fourBoxLinePoint[2], Scalar.Red, 5);
 
-                return crossLinePoint; // 축 값의 좌표들
+                return fourBoxLinePoint; // 축 값의 좌표들
             }
         }
 
