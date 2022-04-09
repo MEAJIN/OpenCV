@@ -7,7 +7,7 @@ namespace OpenCV
 {
     internal static class test
     {
-        const double PIDIVISION3 = 57.295779513082320876798154814105;
+        const double RADIAN = 57.295779513082320876798154814105;
         //5
         // 랜덤 좌표 생성 함수
         static Point RandomValueXY(int x, int y)
@@ -164,7 +164,7 @@ namespace OpenCV
 
             // 라디안을 이용한 각도 값 반환'
             // 실수는 180/Pi 이다
-            return radian * PIDIVISION3;
+            return radian * RADIAN;
         }
 
         //15
@@ -259,8 +259,8 @@ namespace OpenCV
             crossBoardTemp = new Mat(crossBoard.Size(), MatType.CV_8UC3);
             for (int i = 0; i <= (int)(Distance + 0.5); i++)
             {
-                int newX = randomValueXY_C.X + -(int)(Math.Cos(pointDegree / PIDIVISION3) * i),
-                    newY = randomValueXY_C.Y + (int)(Math.Sin(pointDegree / PIDIVISION3) * i);
+                int newX = randomValueXY_C.X + -(int)(Math.Cos(pointDegree / RADIAN) * i),
+                    newY = randomValueXY_C.Y + (int)(Math.Sin(pointDegree / RADIAN) * i);
                 temp = move(crossBoard, newX, newY);
                 Spin(temp, crossBoardTemp, new Point(newX, newY), randomValueAngle_C + (int)axisDegree * direct);
       
