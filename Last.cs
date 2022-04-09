@@ -129,7 +129,7 @@ namespace OpenCV
                 Point[] fourBoxLinePoint = GetFourBoxLinPoint(fourBoxPoint, caculationOrder);
 
                 Cv2.Line(src, fourBoxLinePoint[1], fourBoxLinePoint[3], Scalar.Red, 10);
-                Cv2.Line(src, fourBoxLinePoint[0], fourBoxLinePoint[2], Scalar.Red, 5);
+                Cv2.Line(src, fourBoxLinePoint[0], fourBoxLinePoint[2], Scalar.Red, 10);
 
                 return fourBoxLinePoint; // 축 값의 좌표들
             }
@@ -234,13 +234,6 @@ namespace OpenCV
             Mat add = new Mat();
             Cv2.Add(fourBoxBoard, crossBoard, add);
             Cv2.ImShow("FPaint", add);
-
-            // 프로그램 실행 시 도형 확인을 위한 wait 함수
-            /*    if (Cv2.WaitKey(2000) == 'q')
-                {
-                    int a = 0;
-                }*/
-            Cv2.WaitKey(0);
 
             // axisDegree값 만큼 반복하며 1도씩 이미지 회전
             for (int i = 0; i <= (int)(axisDegree + 0.5); i++)
