@@ -72,7 +72,7 @@ namespace OpenCV
             //cross  contour, drawline
             // 이미지의 색깔 채널을 그레이스케일로 변환
             Cv2.CvtColor(Board, bin, ColorConversionCodes.BGR2GRAY);
-            // 그레이스케일된 이미지를 흑백으로 구분하여 처리 -> 임계값에 해당되면 백색처리!=검정
+            // 그레이스케일된 이미지를 흑백으로 구분하여 처리 -> 임계값에 이하면 흑색처리!=백색
             Cv2.Threshold(bin, bin, 70, 255, ThresholdTypes.Binary);
             // 이분화된 값으로 윤곽선 검사
             Cv2.FindContours(bin, out Point[][] contour, out HierarchyIndex[] hierarchy,
