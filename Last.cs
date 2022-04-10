@@ -168,12 +168,12 @@ namespace OpenCV
         }
 
         //15
-        static Mat move(Mat board, int x, int y)
-        {   // 주어진 좌표에서 offset 만큼 이동 하여 cross 이미지 생성
-            Mat temp = new Mat(board.Size(), MatType.CV_8UC3);
-            Cv2.Rectangle(temp, new Point(x + 40, y) , new Point(x + 60, y + 100) , Scalar.Red, -1);
-            Cv2.Rectangle(temp, new Point(x, y + 40)  , new Point(x + 100, y + 60) , Scalar.Red, -1);
-            return temp;
+        static Mat Move(Mat board, int x, int y)
+        {
+            Mat MoveValueXY_Board = new Mat(board.Size(), MatType.CV_8UC3);
+            Cv2.Rectangle(MoveValueXY_Board, new Point(x + 40, y) , new Point(x + 60, y + 100) , Scalar.Red, -1);
+            Cv2.Rectangle(MoveValueXY_Board, new Point(x, y + 40)  , new Point(x + 100, y + 60) , Scalar.Red, -1);
+            return MoveValueXY_Board;
         }
         static void Main()
         {
@@ -211,6 +211,7 @@ namespace OpenCV
 
             //4
             // 구해진 중심좌표들로 cross와 fourBox의 거리를 구함
+
             double Distance = Math.Sqrt(Math.Pow((double)test.X - (double)ftest.X, 2)
                                       + Math.Pow((double)test.Y - (double)ftest.Y, 2));
 
@@ -235,6 +236,8 @@ namespace OpenCV
             Cv2.Add(fourBoxBoard, crossBoard, add);
             Cv2.ImShow("FPaint", add);
 
+            Cv2.WaitKey(0);
+
             // axisDegree값 만큼 반복하며 1도씩 이미지 회전
             for (int i = 0; i <= (int)(axisDegree + 0.5); i++)
             {
@@ -245,23 +248,25 @@ namespace OpenCV
                 Cv2.ImShow("FPaint", add);
                 if (Cv2.WaitKey(5) == 'q') break;
             }
-
+            Cv2.WaitKey(0);
             //14
-            Mat temp = new Mat();
-
+            Mat MoveValueXY_Board = new Mat();
+          
             crossBoardTemp = new Mat(crossBoard.Size(), MatType.CV_8UC3);
             for (int i = 0; i <= (int)(Distance + 0.5); i++)
             {
+                // 이동 좌표 구하기
                 int newX = randomValueXY_C.X + -(int)(Math.Cos(pointDegree / RADIAN) * i),
                     newY = randomValueXY_C.Y + (int)(Math.Sin(pointDegree / RADIAN) * i);
-                temp = move(crossBoard, newX, newY);
-                Spin(temp, crossBoardTemp, new Point(newX, newY), randomValueAngle_C + (int)axisDegree * direct);
+                // 이동 좌표 MoveValueXY_Board에 할당
+                MoveValueXY_Board = Move(crossBoard, newX, newY);
+                Spin(MoveValueXY_Board, crossBoardTemp, new Point(newX, newY), randomValueAngle_C + (int)axisDegree * direct);
       
                 DrawLine(Contour(crossBoardTemp), crossBoardTemp, 0);
 
                 Cv2.Add(crossBoardTemp, fourBoxBoard, add);
                 Cv2.ImShow("FPaint", add);
-                if (Cv2.WaitKey(1) == 'q') break;
+                Cv2.WaitKey(1);
             }         
 
             Cv2.WaitKey(0);
